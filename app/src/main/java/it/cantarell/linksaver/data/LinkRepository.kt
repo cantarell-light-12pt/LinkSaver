@@ -1,6 +1,6 @@
 package it.cantarell.linksaver.data
 
-interface LinkRepository {
+fun interface LinkRepository {
     /** Saves [link] and returns its generated id. */
     suspend fun add(link: Link): Long
 }
