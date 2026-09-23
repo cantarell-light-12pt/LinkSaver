@@ -11,6 +11,8 @@ composeBom = "2026.02.01"
 ksp = "2.3.12"
 room = "2.8.5"
 coroutines = "1.10.2"
+jacoco = "0.8.15"
+sonarqube = "7.5.0.8588"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,4 +41,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 

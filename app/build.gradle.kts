@@ -39,10 +39,30 @@ android {
     buildFeatures {
         compose = true
     }
+    testCoverage {
+        jacocoVersion = libs.versions.jacoco.get()
+    }
 }
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+// The Sonar plugin does not detect source sets with AGP's built-in Kotlin, so they are
+// listed explicitly. Coverage comes from the JaCoCo XML reports produced by
+// createDebugUnitTestCoverageReport and createDebugAndroidTestCoverageReport.
+configure<org.sonarqube.gradle.SonarExtension> {
+    properties {
+        property("sonar.sources", "src/main")
+        property("sonar.tests", "src/test,src/androidTest")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            listOf(
+                "build/reports/coverage/test/debug/report.xml",
+                "build/reports/coverage/androidTest/debug/connected/report.xml",
+            ).joinToString(","),
+        )
+    }
 }
 
 dependencies {

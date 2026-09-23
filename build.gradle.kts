@@ -4,4 +4,13 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.room) apply false
+    alias(libs.plugins.sonarqube)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "cantarell-light-12pt_LinkSaver")
+        property("sonar.organization", "cantarell-light-12pt")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }

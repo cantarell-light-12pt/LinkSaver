@@ -22,6 +22,7 @@ LinkSaver is an Android app that lets the user save links and share them via QR 
 ./gradlew testDebugUnitTest                  # JVM unit tests (app/src/test)
 ./gradlew connectedDebugAndroidTest          # instrumented/Compose UI tests (app/src/androidTest), needs a device
 ./gradlew lintDebug                          # Android lint
+./gradlew sonar                              # SonarCloud analysis (needs SONAR_TOKEN; normally run by CI)
 
 # single test class / method
 ./gradlew testDebugUnitTest --tests "it.cantarell.linksaver.ExampleUnitTest"
@@ -35,6 +36,8 @@ The Gradle configuration cache is enabled (`gradle.properties`), so build logic 
 
 - All new code must be tested, with **at least 80% coverage**. SonarCloud enforces this on PRs.
 - Coverage is enabled on the debug build type. `./gradlew createDebugUnitTestCoverageReport` writes `app/build/reports/coverage/test/debug/report.xml`, and `./gradlew createDebugAndroidTestCoverageReport` (runs the instrumented tests, needs a device) writes `app/build/reports/coverage/androidTest/debug/connected/report.xml`. SonarCloud must receive both JaCoCo XML reports.
+- JaCoCo comes from AGP's built-in coverage, with its version pinned in the catalog (`jacoco`) through `android.testCoverage`. The `org.sonarqube` Gradle plugin, applied in the root build, sends both reports. Its module settings (sources, tests, report paths) live in `app/build.gradle.kts`.
+- CI (`.github/workflows/build.yml`) runs on PRs and on pushes to `main`. It runs both coverage tasks (the instrumented ones on an emulator) and then `./gradlew sonar`. This replaces SonarCloud Automatic Analysis, which cannot import coverage.
 - Put logic in plain classes (ViewModels, repositories, parsers/validators) that JVM unit tests can cover. Keep composables thin and cover them with Compose UI tests in `androidTest`. Room DAOs are tested in `androidTest` against an in-memory database.
 
 ## Workflow (GitHub issues → branch → PR)
