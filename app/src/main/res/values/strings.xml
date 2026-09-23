@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">LinkSaver</string>
+
+    <string name="add_link_title">Add link</string>
+    <string name="add_link_url_label">URL</string>
+    <string name="add_link_url_error_empty">Enter a URL</string>
+    <string name="add_link_url_error_invalid">Enter a valid http or https URL</string>
+    <string name="add_link_name_label">Name (optional)</string>
+    <string name="add_link_name_hint">Defaults to the URL</string>
+    <string name="add_link_icon_label">Icon (optional)</string>
+    <string name="add_link_icon_hint">A single emoji</string>
+    <string name="add_link_icon_error">Enter a single emoji</string>
+    <string name="add_link_category_label">Category (optional)</string>
+    <string name="add_link_tags_label">Tags (optional)</string>
+    <string name="add_link_tags_hint">Separate multiple tags with commas</string>
+    <string name="add_link_add_tag">Add tag</string>
+    <string name="add_link_remove_tag">Remove tag %1$s</string>
+    <string name="add_link_save">Save</string>
+    <string name="add_link_saved">Link saved</string>
+    <string name="add_link_save_failed">Could not save the link</string>
 </resources>

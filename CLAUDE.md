@@ -6,7 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 LinkSaver is an Android app that lets the user save links and share them via QR code. Kotlin, Jetpack Compose (Material 3), single Gradle module `:app`, package `it.cantarell.linksaver`. `minSdk` 26, `compileSdk`/`targetSdk` 37, Java 11 target. Dependencies and plugin versions live in the version catalog `gradle/libs.versions.toml`, so add new libraries there and not inline in `app/build.gradle.kts`.
 
-The project is still at the Android Studio template stage: `MainActivity` hosts a placeholder `Greeting` composable and `ui/theme/` holds the generated `LinkSaverTheme`. There is no persistence, navigation, DI, or QR library yet. When introducing these, pick one approach and record it here.
+### Architecture decisions
+
+- **Persistence**: Room (`data/LinkDatabase`, entity `Link`, `LinkDao`), code generated with KSP. The schema is exported to `app/schemas/`, so commit the new JSON whenever the schema version changes. Tags are stored in a single column via `Converters`.
+- **DI**: manual. `LinkSaverApplication` owns an `AppContainer` that builds the database and repositories lazily. ViewModels get their dependencies through a `viewModelFactory` in their companion (`Factory`).
+- **UI state**: one ViewModel per screen exposing a `StateFlow<…UiState>` and a single `onEvent(…Event)` entry point. `…Route` composables collect the state; `…Screen` composables are stateless and take `state` + `onEvent`.
+- **Validation**: pure Kotlin in `data/LinkInputValidator` (JVM-testable, no Android APIs).
+- **Navigation / QR**: not introduced yet. `MainActivity` shows the add-link screen directly.
 
 ## Commands
 
@@ -28,12 +34,12 @@ The Gradle configuration cache is enabled (`gradle.properties`), so build logic 
 ## Testing requirements
 
 - All new code must be tested, with **at least 80% coverage**. SonarCloud enforces this on PRs.
-- No coverage tooling is configured yet. Before the first feature PR, enable it in `app/build.gradle.kts` (`buildTypes.debug { enableUnitTestCoverage = true; enableAndroidTestCoverage = true }`, which gives `createDebugUnitTestCoverageReport` / `createDebugAndroidTestCoverageReport`) and make sure SonarCloud gets the JaCoCo XML report.
-- Put logic in plain classes (ViewModels, repositories, parsers/validators) that JVM unit tests can cover. Keep composables thin and cover them with Compose UI tests in `androidTest`.
+- Coverage is enabled on the debug build type. `./gradlew createDebugUnitTestCoverageReport` writes `app/build/reports/coverage/test/debug/report.xml`, and `./gradlew createDebugAndroidTestCoverageReport` (runs the instrumented tests, needs a device) writes `app/build/reports/coverage/androidTest/debug/connected/report.xml`. SonarCloud must receive both JaCoCo XML reports.
+- Put logic in plain classes (ViewModels, repositories, parsers/validators) that JVM unit tests can cover. Keep composables thin and cover them with Compose UI tests in `androidTest`. Room DAOs are tested in `androidTest` against an in-memory database.
 
 ## Workflow (GitHub issues → branch → PR)
 
-Development is tracked through issues at https://github.com/cantarell-light-12pt/LinkSaver. Use the GitHub MCP server or `gh` to read issues. There is a single developer.
+Development is tracked through issues at https://github.com/cantarell-light-12pt/LinkSaver. Interact with GitHub **exclusively through the GitHub MCP server** (issues, branches, pushes, PRs); `gh` and git HTTPS pushes are not used. There is a single developer.
 
 1. When you start an issue, create a new branch from an up-to-date `main`, e.g. `git checkout main && git pull && git checkout -b <issue-number>-<short-slug>`.
 2. Every commit message starts with the issue number in brackets, followed by a brief, descriptive summary: `[#12] Add QR code generation for saved links`.
