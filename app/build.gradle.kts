@@ -27,9 +27,8 @@ android {
             enableAndroidTestCoverage = true
         }
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
     compileOptions {
@@ -39,10 +38,31 @@ android {
     buildFeatures {
         compose = true
     }
+    testCoverage {
+        jacocoVersion = libs.versions.jacoco.get()
+    }
 }
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+// The Sonar plugin detects the Android sources and tests itself when `sonar` runs, and appends
+// them to sonar.sources/sonar.tests, so setting those here would index files twice. The test
+// components also list the main manifest, so it is excluded from the test files. Coverage comes
+// from the JaCoCo XML reports produced by createDebugUnitTestCoverageReport and
+// createDebugAndroidTestCoverageReport.
+configure<org.sonarqube.gradle.SonarExtension> {
+    properties {
+        property("sonar.test.exclusions", "**/AndroidManifest.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            listOf(
+                "build/reports/coverage/test/debug/report.xml",
+                "build/reports/coverage/androidTest/debug/connected/report.xml",
+            ).joinToString(","),
+        )
+    }
 }
 
 dependencies {

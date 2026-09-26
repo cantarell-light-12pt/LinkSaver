@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-LinkSaver is an Android app that lets the user save links and share them via QR code. Kotlin, Jetpack Compose (Material 3), single Gradle module `:app`, package `it.cantarell.linksaver`. `minSdk` 26, `compileSdk`/`targetSdk` 37, Java 11 target. Dependencies and plugin versions live in the version catalog `gradle/libs.versions.toml`, so add new libraries there and not inline in `app/build.gradle.kts`.
+LinkSaver is an Android app that lets the user save links and share them via QR code. Kotlin, Jetpack Compose (Material 3), single Gradle module `:app`, package `it.cantarell.linksaver`. `minSdk` 26, `compileSdk`/`targetSdk` 37, Java 11 target. Dependencies and plugin versions live in the version catalog `gradle/libs.versions.toml`, so add new libraries there and not inline in `app/build.gradle.kts`. Gradle dependency verification is on (`gradle/verification-metadata.xml`, SHA-256 checksums): after adding or upgrading a dependency or plugin, run `./gradlew --write-verification-metadata sha256 help assembleRelease assembleDebugAndroidTest testDebugUnitTest` and commit the updated file, or the build fails verification.
 
 ### Architecture decisions
 
@@ -22,6 +22,7 @@ LinkSaver is an Android app that lets the user save links and share them via QR 
 ./gradlew testDebugUnitTest                  # JVM unit tests (app/src/test)
 ./gradlew connectedDebugAndroidTest          # instrumented/Compose UI tests (app/src/androidTest), needs a device
 ./gradlew lintDebug                          # Android lint
+./gradlew sonar                              # SonarCloud analysis (needs SONAR_TOKEN; normally run by CI)
 
 # single test class / method
 ./gradlew testDebugUnitTest --tests "it.cantarell.linksaver.ExampleUnitTest"
@@ -35,6 +36,8 @@ The Gradle configuration cache is enabled (`gradle.properties`), so build logic 
 
 - All new code must be tested, with **at least 80% coverage**. SonarCloud enforces this on PRs.
 - Coverage is enabled on the debug build type. `./gradlew createDebugUnitTestCoverageReport` writes `app/build/reports/coverage/test/debug/report.xml`, and `./gradlew createDebugAndroidTestCoverageReport` (runs the instrumented tests, needs a device) writes `app/build/reports/coverage/androidTest/debug/connected/report.xml`. SonarCloud must receive both JaCoCo XML reports.
+- JaCoCo comes from AGP's built-in coverage, with its version pinned in the catalog (`jacoco`) through `android.testCoverage`. The `org.sonarqube` Gradle plugin, applied in the root build, sends both reports. Its module settings (report paths, exclusions) live in `app/build.gradle.kts`. Don't set `sonar.sources`/`sonar.tests` there: the plugin adds the detected Android sources and tests to them when `sonar` runs, and overlapping paths make the scanner fail with "can't be indexed twice".
+- CI (`.github/workflows/build.yml`) runs on PRs and on pushes to `main`. It runs both coverage tasks (the instrumented ones on an emulator) and then `./gradlew sonar`. This replaces SonarCloud Automatic Analysis, which cannot import coverage.
 - Put logic in plain classes (ViewModels, repositories, parsers/validators) that JVM unit tests can cover. Keep composables thin and cover them with Compose UI tests in `androidTest`. Room DAOs are tested in `androidTest` against an in-memory database.
 
 ## Workflow (GitHub issues → branch → PR)

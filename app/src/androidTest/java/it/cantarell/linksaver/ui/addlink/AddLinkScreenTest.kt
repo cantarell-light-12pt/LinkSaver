@@ -40,7 +40,27 @@ class AddLinkScreenTest {
 
     @Test
     fun typingInFields_sendsChangeEvents() {
-        setScreen(AddLinkUiState())
+        // The fields are controlled: if the state never takes the typed text, a field re-syncs to
+        // the old value when it loses focus and emits an extra change event on some devices/IMEs.
+        var state by mutableStateOf(AddLinkUiState())
+        composeRule.setContent {
+            LinkSaverTheme {
+                AddLinkScreen(
+                    state = state,
+                    onEvent = { event ->
+                        events += event
+                        state = when (event) {
+                            is AddLinkEvent.UrlChanged -> state.copy(url = event.value)
+                            is AddLinkEvent.NameChanged -> state.copy(name = event.value)
+                            is AddLinkEvent.IconChanged -> state.copy(icon = event.value)
+                            is AddLinkEvent.CategoryChanged -> state.copy(category = event.value)
+                            is AddLinkEvent.TagInputChanged -> state.copy(tagInput = event.value)
+                            else -> state
+                        }
+                    },
+                )
+            }
+        }
 
         field("URL").performTextInput("example.com")
         field("Name (optional)").performTextInput("Example")
