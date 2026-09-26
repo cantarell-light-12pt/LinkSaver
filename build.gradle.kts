@@ -12,6 +12,5 @@ sonar {
         property("sonar.projectKey", "cantarell-light-12pt_LinkSaver")
         property("sonar.organization", "andrewkant-ml")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.test.exclusions", "**/AndroidManifest.xml")
     }
 }

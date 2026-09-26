@@ -48,13 +48,14 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
-// The Sonar plugin does not detect source sets with AGP's built-in Kotlin, so they are
-// listed explicitly. Coverage comes from the JaCoCo XML reports produced by
-// createDebugUnitTestCoverageReport and createDebugAndroidTestCoverageReport.
+// The Sonar plugin detects the Android sources and tests itself when `sonar` runs, and appends
+// them to sonar.sources/sonar.tests, so setting those here would index files twice. The test
+// components also list the main manifest, so it is excluded from the test files. Coverage comes
+// from the JaCoCo XML reports produced by createDebugUnitTestCoverageReport and
+// createDebugAndroidTestCoverageReport.
 configure<org.sonarqube.gradle.SonarExtension> {
     properties {
-        property("sonar.sources", "src/main")
-        property("sonar.tests", "src/test,src/androidTest")
+        property("sonar.test.exclusions", "**/AndroidManifest.xml")
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
             listOf(
