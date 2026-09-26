@@ -10,7 +10,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "cantarell-light-12pt_LinkSaver")
-        property("sonar.organization", "cantarell-light-12pt")
+        property("sonar.organization", "andrewkant-ml")
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
