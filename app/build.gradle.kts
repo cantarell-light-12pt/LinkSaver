@@ -27,9 +27,8 @@ android {
             enableAndroidTestCoverage = true
         }
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
     compileOptions {

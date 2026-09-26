@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-LinkSaver is an Android app that lets the user save links and share them via QR code. Kotlin, Jetpack Compose (Material 3), single Gradle module `:app`, package `it.cantarell.linksaver`. `minSdk` 26, `compileSdk`/`targetSdk` 37, Java 11 target. Dependencies and plugin versions live in the version catalog `gradle/libs.versions.toml`, so add new libraries there and not inline in `app/build.gradle.kts`.
+LinkSaver is an Android app that lets the user save links and share them via QR code. Kotlin, Jetpack Compose (Material 3), single Gradle module `:app`, package `it.cantarell.linksaver`. `minSdk` 26, `compileSdk`/`targetSdk` 37, Java 11 target. Dependencies and plugin versions live in the version catalog `gradle/libs.versions.toml`, so add new libraries there and not inline in `app/build.gradle.kts`. Gradle dependency verification is on (`gradle/verification-metadata.xml`, SHA-256 checksums): after adding or upgrading a dependency or plugin, run `./gradlew --write-verification-metadata sha256 help assembleRelease assembleDebugAndroidTest testDebugUnitTest` and commit the updated file, or the build fails verification.
 
 ### Architecture decisions
 
