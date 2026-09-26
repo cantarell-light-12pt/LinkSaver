@@ -5,6 +5,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
@@ -24,7 +25,7 @@ class MainActivityTest {
     @Test
     fun invalidUrl_showsErrorFromViewModel() {
         composeRule.onNode(hasSetTextAction() and hasText("URL")).performTextInput("not a url")
-        composeRule.onNodeWithText("Save").performClick()
+        composeRule.onNodeWithText("Save").performScrollTo().performClick()
 
         composeRule.onNodeWithText("Enter a valid http or https URL").assertExists()
     }
